@@ -6,6 +6,7 @@ function StandupLogs() {
   const {
     createHistory,
     exportHistory,
+    localUser,
     logCurrent,
     setUserState,
     usersState
@@ -46,7 +47,7 @@ function StandupLogs() {
   return (
     <div className="standup-logs">
       <header>
-        <h1>Welcome to StandupLogs!</h1>
+        <h1>Welcome to StandupLogs, {localUser.displayName}!</h1>
         <h1>Today is: {new Date().toDateString()}</h1>
       </header>
       <section>
