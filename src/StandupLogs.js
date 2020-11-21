@@ -1,45 +1,9 @@
-import { useState } from 'react';
+import { useContext } from 'react';
 import './StandupLogs.css';
+import UsersContext from './UsersContext';
 
 function StandupLogs() {
-  const [users, setUsers] = useState([
-    {
-      name: 'Greyson',
-      key: 0,
-      done: ['stuff'],
-      doing: ['more stuff']
-    },
-    {
-      name: 'Juanca',
-      key: 1,
-      done: ['stuff'],
-      doing: ['more stuff']
-    },
-    {
-      name: 'Anne',
-      key: 2,
-      done: ['stuff'],
-      doing: ['more stuff']
-    },
-    {
-      name: 'Andre',
-      key: 3,
-      done: ['stuff'],
-      doing: ['more stuff']
-    },
-    {
-      name: 'Azur',
-      key: 4,
-      done: ['stuff'],
-      doing: ['more stuff']
-    },
-    {
-      name: 'Ben',
-      key: 5,
-      done: ['stuff'],
-      doing: ['more stuff']
-    },
-  ]);
+  const { usersState, setUserState } = useContext(UsersContext);
 
   function inputKeyDownHandler(event, user, targetState) {
     if (event.key === 'Enter') {
@@ -47,35 +11,31 @@ function StandupLogs() {
         return;
       }
 
-      const newUsers = users.map((mappingUser) => {
-        if (user.key === mappingUser.key) {
-          return {
-            ...mappingUser,
-            done: targetState === 'done' ? [...mappingUser.done, event.target.value] : mappingUser.done,
-            doing: targetState === 'doing' ? [...mappingUser.doing, event.target.value] : mappingUser.doing
-          };
-        }
-
-        return mappingUser;
-      });
+      const newUser = {
+        ...user,
+        done: targetState === 'done' ? [...user.done, event.target.value] : user.done,
+        doing: targetState === 'doing' ? [...user.doing, event.target.value] : user.doing
+      }
 
       event.target.value = '';
 
-      setUsers(newUsers);
+      setUserState(newUser);
     }
   }
 
   function newDayClickHandler() {
-    const newUsers = users.map((user) => {
-      return {
+    usersState.forEach((user) => {
+      const newUser = {
         ...user,
         done: user.doing,
         doing: []
-      }
-    });
+      };
 
-    setUsers(newUsers);
+      setUserState(newUser);
+    });
   }
+
+  console.log(usersState);
 
   return (
     <div className="standup-logs">
@@ -88,11 +48,10 @@ function StandupLogs() {
           <button onClick={newDayClickHandler}>New Day</button>
         </div>
         <div className="users">
-          {users.map((user) => {
+          {usersState && usersState.map((user) => {
             return (
-              <div key={user.key} className="user-container">
+              <div key={user.name} className="user-container">
                 <h2>{user.name}</h2>
-                <hr />
                 <h3>Done</h3>
                 <ul>
                   {user.done.map((item, index) => {
@@ -102,7 +61,6 @@ function StandupLogs() {
                   })}
                 </ul>
                 <input id={`${user.name}-done-input`} type="text" placeholder="What else did you do?" onKeyDown={(event) => { inputKeyDownHandler(event, user, 'done') }} />
-                <hr />
                 <h3>Doing</h3>
                 <ul>
                   {user.doing.map((item, index) => {
