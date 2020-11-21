@@ -3,7 +3,13 @@ import './StandupLogs.css';
 import UsersContext from './UsersContext';
 
 function StandupLogs() {
-  const { usersState, setUserState } = useContext(UsersContext);
+  const {
+    createHistory,
+    exportHistory,
+    logCurrent,
+    setUserState,
+    usersState
+  } = useContext(UsersContext);
 
   function inputKeyDownHandler(event, user, targetState) {
     if (event.key === 'Enter') {
@@ -24,6 +30,8 @@ function StandupLogs() {
   }
 
   function newDayClickHandler() {
+    createHistory();
+
     usersState.forEach((user) => {
       const newUser = {
         ...user,
@@ -35,8 +43,6 @@ function StandupLogs() {
     });
   }
 
-  console.log(usersState);
-
   return (
     <div className="standup-logs">
       <header>
@@ -45,7 +51,10 @@ function StandupLogs() {
       </header>
       <section>
         <div className="action-button-container">
-          <button onClick={newDayClickHandler}>New Day</button>
+          {!logCurrent && (
+            <button onClick={newDayClickHandler}>New Day</button>
+          )}
+          <button onClick={exportHistory}>Export History</button>
         </div>
         <div className="users">
           {usersState && usersState.map((user) => {
